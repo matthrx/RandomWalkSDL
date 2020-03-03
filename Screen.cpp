@@ -28,7 +28,6 @@ bool Screen::init(void){
 	y = new int;
 	*x = WIDTH_WINDOW/2;
 	*y = HEIGHT_WINDOW/2;
-	cout << "Ok";
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 	    	return false;
 		}
@@ -72,8 +71,7 @@ bool Screen::init(void){
 	   // we just created a buffer with a size of width*height
 	   memset(this->buffer, 0xFF, WIDTH_WINDOW*HEIGHT_WINDOW*sizeof(Uint32)); // Allow to put in white, allow to set a block of
 	   //memory with a specific value, value can be hexa or 10Base
-	   std::cout << (this->buffer)[12345] << std::endl;
-	   std::cout << sizeof(unsigned int)*8 << std::endl;
+
 
 
 	 return true;
@@ -98,25 +96,32 @@ void Screen::handleSingleMouvementParticule(void){
 	else { (*x)-=dx; (*y)-=dy;}
 	*x %= WIDTH_WINDOW;
 	*y %= HEIGHT_WINDOW;
-	std::cout << "In it" << std::flush;
 	setPixel();
 
 }
 
 
 void Screen::processEvent(){
-	std::cout << "Running..." << std::flush;
 	SDL_Event event;
+	const Uint8* keyboard_state_array = SDL_GetKeyboardState(NULL);
 	while (!(close)){
 		usleep(MILLISECONDS);
 		handleSingleMouvementParticule();
 		update();
 		while (SDL_PollEvent(&event)) {
 			switch(event.type) {
-
-			case SDL_KEYUP:
-				std::cout << "KeyUp !" << std::endl;
+			case SDL_MOUSEBUTTONDOWN:
+				*x = event.motion.x;
+				*y = event.motion.y;
 				break;
+			case SDL_KEYDOWN:
+				if (keyboard_state_array[SDL_SCANCODE_SPACE]){
+				*x = WIDTH_WINDOW/2;
+				*y = HEIGHT_WINDOW/2;
+				memset(buffer, 255, WIDTH_WINDOW*HEIGHT_WINDOW*sizeof(Uint32));
+				}
+				break;
+
 			case SDL_QUIT:
 				close = true;
 				break;
@@ -124,7 +129,6 @@ void Screen::processEvent(){
 		}
 	}
 }
-
 void Screen::getRealColor(void){
 	this->color += RED;
 	this->color <<= 8;
@@ -136,7 +140,6 @@ void Screen::getRealColor(void){
 }
 
 void Screen::setPixel(void){
-	cout << "Value of x " << *x << endl;
 	(this->buffer)[abs(*y) * WIDTH_WINDOW + abs(*x)] = this->color;
 }
 

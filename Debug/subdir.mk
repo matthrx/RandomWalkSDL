@@ -4,17 +4,14 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
-../Particle.cpp \
 ../Screen.cpp \
 ../main.cpp 
 
 OBJS += \
-./Particle.o \
 ./Screen.o \
 ./main.o 
 
 CPP_DEPS += \
-./Particle.d \
 ./Screen.d \
 ./main.d 
 
